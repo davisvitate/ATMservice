@@ -5,24 +5,19 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.microservice.atm.model.CountH;
 import com.microservice.atm.model.CurrentAccount;
 
-import reactor.core.publisher.Flux;
+
 import reactor.core.publisher.Mono;
 
 @Service
 public class AtmServiceImp implements AtmServices {
 	
-	@Autowired
-	@Qualifier("Movement")
-	WebClient client;
-	
-	@Autowired
-	@Qualifier("Client")
-	WebClient client1;
+
 	
 	@Autowired
 	@Qualifier("CurrentR")
@@ -43,43 +38,23 @@ public class AtmServiceImp implements AtmServices {
 	
 
 	
-
-	@SuppressWarnings("deprecation")
-	public Mono<Movement> saveMSMovement(Movement movement) {
-		return client.post()
-				.accept(APPLICATION_JSON_UTF8)
-				.contentType(APPLICATION_JSON_UTF8)
-				//.body(fromObject(producto))
-				.syncBody(movement)
-				.retrieve()
-				.bodyToMono(Movement.class);
-	}
 	
 	@SuppressWarnings("deprecation")
-	public Mono<ClientPerson> saveMSClient(ClientPerson client) {
-		return client1.post()
+	public Mono<CountH> retireCount(CountH client, String dni) {
+		return clientCounthR.put().uri("/"+dni)
+				// http://localhost:8090/apicounth/retire/dni/{dni}
 				.accept(APPLICATION_JSON_UTF8)
 				.contentType(APPLICATION_JSON_UTF8)
 				//.body(fromObject(producto))
-				.syncBody(client)
-				.retrieve()
-				.bodyToMono(ClientPerson.class);
-	}
 	
-	@SuppressWarnings("deprecation")
-	public Mono<CountH> retireCount(CountH client) {
-		return clientCounthR.put()
-				.accept(APPLICATION_JSON_UTF8)
-				.contentType(APPLICATION_JSON_UTF8)
-				//.body(fromObject(producto))
 				.syncBody(client)
 				.retrieve()
 				.bodyToMono(CountH.class);
 	}
 
 	@SuppressWarnings("deprecation")
-	public Mono<CountH> depositeCount(CountH client) {
-		return clientCounthD.put()
+	public Mono<CountH> depositeCount(CountH client,String dni) {
+		return clientCounthD.put().uri("/"+dni)
 				.accept(APPLICATION_JSON_UTF8)
 				.contentType(APPLICATION_JSON_UTF8)
 				//.body(fromObject(producto))
@@ -89,8 +64,8 @@ public class AtmServiceImp implements AtmServices {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public Mono<CurrentAccount> retireCurrent(CurrentAccount client) {
-		return clientCurrentR.put()
+	public Mono<CurrentAccount> retireCurrent(CurrentAccount client, String dni) {
+		return clientCurrentR.put().uri("/"+dni)
 				.accept(APPLICATION_JSON_UTF8)
 				.contentType(APPLICATION_JSON_UTF8)
 				//.body(fromObject(producto))
@@ -100,8 +75,8 @@ public class AtmServiceImp implements AtmServices {
 	}
 
 	@SuppressWarnings("deprecation")
-	public Mono<CurrentAccount> depositeCurrent(CurrentAccount client) {
-		return clientCurrentD.put()
+	public Mono<CurrentAccount> depositeCurrent(CurrentAccount client, String dni) {
+		return clientCurrentD.put().uri("/"+dni)
 				.accept(APPLICATION_JSON_UTF8)
 				.contentType(APPLICATION_JSON_UTF8)
 				//.body(fromObject(producto))
